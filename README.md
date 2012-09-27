@@ -7,5 +7,5 @@ The video is available here:
 http://screencast.com/t/Nv0h49GgHW
 
 Screenshot:
-![Alt text](https://github.com/jkrooswyk/Story-Deep-Copy-to-New-Project/raw/master/Screenshot_StoryDeepCopytoNewProject.png)
+![Alt text](https://github.com/jkrooswyk/Story-Deep-Copy-to-New-Project/raw/master/Screenshot_Story-Deep-Copy-to-New-Project.png)
 
