@@ -2,9 +2,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html dir="ltr">
 <head>
-    <title>Deep Copy Story</title>
-    <meta name="Name" content="App: Story Deep Copy"/>
-    <meta name="Version" content="2012.11.13"/>
+    <title>Deep Copy Story with rank, minus dependencies, top parent stripped</title>
+    <meta name="Name" content="App: Story Deep Copy to New Project"/>
+    <meta name="Version" content="2012.5.20"/>
     <meta name="Vendor" content="Rally Software"/>
     <meta name="Author" content="Joel Krooswyk, assists by Dave Thomas and Barry Mullan"/>
     <script type="text/javascript" src="/apps/1.29/sdk.js"></script>
@@ -35,14 +35,16 @@
                     config.eventListeners[eventName](that, eventArgs);
                 }
             };
-        
+
             // removes private and read only fields to keep from pushing them up.
-            this.filterObject = function (object) {
+            this.filterfirstObject = function (object) {
                 delete object.Discussion;
-                //delete object.Rank;
+                delete object.Rank;
+                delete object.Parent;
                 delete object.LastUpdateDate;
                 delete object.Attachments;
                 delete object.AcceptedDate;
+                delete object.Blocked;
                 delete object.Blocker;
                 delete object.Defects;
                 delete object.TaskActualTotal;
@@ -56,7 +58,45 @@
                 delete object.Changesets;
                 delete object.ObjectID;
                 delete object.Iteration;
-                delete object.Release
+                delete object.Release;
+                delete object.Predecessors;
+                delete object.Successors;
+                object.Project._refObjectName = config.selectedProjName;
+                object.Project._ref = config.selectedProjID;
+                console.log(object);
+                for (var j in object) {
+                    if (j.substring(0, 1) == '_') {
+                        delete object[j];
+                    }
+                }
+                return object;
+            };
+
+        
+            // removes private and read only fields to keep from pushing them up.
+            this.filterObject = function (object) {
+                delete object.Discussion;
+                delete object.Rank;
+                delete object.LastUpdateDate;
+                delete object.Attachments;
+                delete object.AcceptedDate;
+                delete object.Blocked;
+                delete object.Blocker;
+                delete object.Defects;
+                delete object.TaskActualTotal;
+                delete object.TaskEstimateTotal;
+                delete object.TaskRemainingTotal;
+                delete object.TaskEstimateTotal;
+                delete object.RevisionHistory;
+                delete object.Subscription;
+                delete object.FormattedID;
+                delete object.CreationDate;
+                delete object.Changesets;
+                delete object.ObjectID;
+                delete object.Iteration;
+                delete object.Release;
+                delete object.Predecessors;
+                delete object.Successors;
                 object.Project._refObjectName = config.selectedProjName;
                 object.Project._ref = config.selectedProjID;
                 console.log(object);
@@ -70,7 +110,11 @@
         
             this._addObject = function(object, typeName, callback) {
                 var item = dojo.clone(object);
-                item = this.filterObject(item);
+                if (!firstStory) {
+                    item = this.filterfirstObject(item);
+                } else {
+                    item = this.filterObject(item);
+                }
                 function errorFunctionWrapper(error) {
                     if (dojo.isArray(error.Errors)) {
                         var errorMessage = error.Errors.pop();
@@ -305,9 +349,6 @@
  
                 objectDropdown = new rally.sdk.ui.ObjectDropdown(config, rallyDataSource);
                 objectDropdown.display("projectChooser");
-                console.log("objdrop");
-                console.log(objectDropdown);
-             
                 //showChooser();
 
                 rally.sdk.ui.AppHeader.setHelpTopic("252");
